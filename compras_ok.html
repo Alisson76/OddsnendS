@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html ng-app="listaCompras">
+    <head>
+        <title>Lista de Compras</title>
+        <meta charset="UTF-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body {
+            font-family: arial, sans-serif;
+            background-color: #dae1e7;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #adadf9;
+        }
+
+        td, th {
+            border: .1em solid;
+            padding: .3em;
+        }
+
+        input {
+            border-radius: .5em;
+        }
+
+        input[type=checkbox] {
+            cursor: pointer;
+        }
+
+        .ok {
+            background-color: darkgreen;
+            color: #fff;
+        }
+
+        .notOk {
+            background-color: darkred;
+            color: #fff;
+        }
+
+        .valor {
+            width: 4em;
+        }
+    </style>
+        <script>
+            var app = angular.module("listaCompras", []);
+            // Lista telefônica controller
+            app.controller("listaComprasCtrl", function ($scope) {
+                $scope.lista = [];
+                $scope.qtds  = [];
+                $scope.totalFull = 0;
+
+                $scope.adicionarItem = function (item) {
+                    $scope.lista.push(item);
+                    this.qtd = item.qtd;
+                    delete $scope.item;
+                    let inputName   = document.querySelector("input[name=nome]");
+                    let inputQtd    = document.querySelector("input[name=qtd]");
+                    inputName.value = "";
+                    inputQtd.value  = "";
+                }
+                $scope.change = function () {
+                    if (this.item)
+                        this.i.qtd = this.item.qtdRow;
+                    if (this.total != undefined) {
+                        $scope.totalFull -= this.total;
+                    }
+                    if ($scope.qtds[this.$id] == undefined) {
+                        $scope.qtds[this.$id] = $scope.qtd;
+                    }
+                    this.total = this.unit * this.i.qtd;
+                    $scope.totalFull += this.total;
+                }
+                $scope.notOk = function () {
+                    if (this.isNotOk) {
+                        $scope.totalFull -= this.total;
+                    } else {
+                        $scope.totalFull += this.total;
+                    }
+                }
+            });
+        </script>
+    </head>
+    <body ng-controller="listaComprasCtrl">
+        <h1>Lista de Compras</h1>
+
+        <p><input type="text" name="nome" ng-model="item.nome" placeholder="digite o nome do item"</p>
+        <p><input type="number" name="qtd" ng-model="item.qtd" placeholder="digite a quantidade"</p>
+        <div>
+            <button ng-click="adicionarItem(item)" ng-disabled="!(item.nome && item.qtd)">Adicionar</button>
+            <p>Total: <input type="number" class="valor" name="totalFull" ng-model="totalFull" readonly</p>
+        </div>
+
+        <hr>
+
+        <table>
+            <tr>
+                <th>OK</th>
+                <th>Não OK</th>
+                <th>Nome</th>
+                <th>Quantidade</th>
+                <th>Valor Unitário</th>
+                <th>Valor Total</th>
+            </tr>
+            <tr ng-class="{ok: isOk, notOk: isNotOk}" ng-repeat="i in lista">
+                <td><input type="checkbox" ng-model="isOk" ng-disabled="isNotOk"></td>
+                <td><input type="checkbox" ng-model="isNotOk" ng-disabled="isOk" ng-change="notOk()"></td>
+                <td><input type="text" value={{i.nome}}></td>
+                <td><input type="number" value={{i.qtd}} ng-model="item.qtdRow" ng-change="change()"></td>
+                <td><input type="number" ng-model="unit"  name="unit" class="valor" ng-change="change()"></td>
+                <td><input type="number" ng-model="total" class="valor" readonly></td>
+            </tr>
+            <input type="hidden" ng-model="qtd">
+        </table>
+
+        <script>
+            /*
+            var units  = [];
+            var totals = [];
+            let btn    = document.querySelector("button");
+            let qtd    = document.querySelector("input[name=qtd]");
+
+            btn.addEventListener("click", () => {
+                let unit  = document.querySelector("input[name=unit]");
+                let total = document.querySelector("input[name=total]");
+                //units.push(unit);
+                //totals.push(total);
+
+                console.log ("unit", unit);
+                unit.addEventListener("onChange", () => {
+                    console.log ("mudou!", qtd.value);
+                });
+
+                //unit.name = "unit-ok";
+                //total.name = "total-ok";
+            });
+            */
+        </script>
+    </body>
+</html>
